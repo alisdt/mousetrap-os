@@ -298,7 +298,10 @@ class mousetrap_form(item.item, mouse_response_mixin):
 			else:
 
 				# Execute form
-				button_clicked, response_time, initiation_time, timestamps, xpos, ypos = self._form._exec(
+				(
+					button_clicked, response_time, initiation_time, timestamps, xpos, ypos,
+					clicks, clicks_timestamps, clicks_xpos, clicks_ypos
+				) = self._form._exec(
 					logging_resolution=self.var.logging_resolution,
 					timeout=self._timeout,
 					reset_mouse=self.var.reset_mouse==u'yes',
@@ -306,8 +309,9 @@ class mousetrap_form(item.item, mouse_response_mixin):
 					click_required = self.var.click_required==u'yes',
 					mouse_buttons_allowed=self._mouse_buttons_allowed,
 					max_initiation_time=self._max_initiation_time,
-					warning_widget = self._warning_widget
-					)
+					warning_widget = self._warning_widget,
+					track_clicks = True
+				)
 
 				# Set response variables as OpenSesame variables
 				self.experiment.response = button_clicked
@@ -322,6 +326,13 @@ class mousetrap_form(item.item, mouse_response_mixin):
 					self.experiment.var.set('timestamps_%s'% self.name,timestamps)
 					self.experiment.var.set('xpos_%s'% self.name,xpos)
 					self.experiment.var.set('ypos_%s'% self.name,ypos)
+
+				# Save click data
+				self.experiment.var.set('clicks_'+self.name, clicks)
+				self.experiment.var.set('clicks_timestamps_'+self.name, clicks_timestamps)
+				self.experiment.var.set('clicks_xpos_'+self.name, clicks_xpos)
+				self.experiment.var.set('clicks_ypos_'+self.name, clicks_ypos)
+				
 
 				# Determine if response was correct and set corresponding variable
 				if self.var.correct_button ==u'':

@@ -115,6 +115,8 @@ class MT_form(form):
 				Only returned if track_clicks is True.
 			clicks_timestamps (list): Timestamp (in ms) for each mouse click. 
 				Only returned if track_clicks is True.
+			clicks_xpos: For convenience, x position of each mouse click
+			clicks_ypos: For convenience, y position of each click
 	    """	
 			
 
@@ -224,7 +226,8 @@ class MT_form(form):
 		if track_clicks:
 			clicks = []
 			clicks_timestamps = []
-
+			clicks_xpos = []
+			clicks_ypos = []
 		
 		# Start tracking
 		while tracking and timeleft>0:
@@ -271,6 +274,8 @@ class MT_form(form):
 				if mouse_button != None:
 					clicks.append(mouse_button)
 					clicks_timestamps.append(timestamp)
+					clicks_xpos.append(position[0])
+					clicks_ypos.append(position[1])
 			
 			# If there was a mouse click, determine the button that was clicked
 			# and if click was on a button, end tracking and finish form
@@ -294,6 +299,10 @@ class MT_form(form):
 		self.experiment.var.form_response = resp
 		
 		if track_clicks == False:
-			return resp, resp_time, initiation_time, timestamps, xpos, ypos
+			return resp, resp_time, initiation_time, timestamps, xpos, ypos, None, None, None, None
 		else:
-			return resp, resp_time, initiation_time, timestamps, xpos, ypos, clicks, clicks_timestamps
+			return (
+				resp, resp_time, initiation_time,
+				timestamps, xpos, ypos,
+				clicks, clicks_timestamps, clicks_xpos, clicks_ypos
+			)
